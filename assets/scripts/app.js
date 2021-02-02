@@ -1,79 +1,76 @@
 class Card {
-  static finishCard(event) {
+  finishCard(event) {
     console.log("FINISH");
-    const actionButton = event.currentTarget
+    const actionButton = event.currentTarget;
     const finishedProjects = document.querySelector("#finished-projects ul");
     actionButton.innerText = "Activate";
     const card = actionButton.parentNode;
     actionButton.removeEventListener("click", (event) =>
-      Card.finishCard(event)
+      this.newCard.finishCard(event)
     );
-    actionButton.addEventListener("click", (event) =>
-      Card.activateCard(event)
-    );
+    actionButton.addEventListener("click", (event) => this.activateCard(event));
     finishedProjects.appendChild(card);
   }
 
-  static activateCard(event) {
-    const actionButton = event.currentTarget
+  activateCard(event) {
+    console.log("ACTIVATE");
+    const actionButton = event.currentTarget;
     const activeProjects = document.querySelector("#active-projects ul");
     actionButton.innerText = "Finish";
     const card = actionButton.parentNode;
     actionButton.removeEventListener("click", (event) =>
-      Card.activateCard(event)
+      this.newCard.activateCard(event)
     );
-    actionButton.addEventListener("click", (event) =>
-      Card.finishCard(event)
-    );
+    actionButton.addEventListener("click", (event) => this.finishCard(event));
     activeProjects.appendChild(card);
   }
 
-  static showMoreInfo(event) {
+  showMoreInfo(event) {
     const target = event.currentTarget;
     const name = target.parentElement.firstElementChild.innerHTML;
-    this.modal = new MoreInfoModal(name);
-    document
-      .getElementById("main-header")
-      .parentElement.append(this.modal.render());
+    const modal = new MoreInfoModal(name);
   }
 }
 
 class MoreInfoModal {
   constructor(name) {
     this.message = `I don't want to ${name.toLowerCase()}`;
-    this.cardName = name.toLowerCase().replace(" ", "-");
+    this.render();
   }
 
   closeModal() {
-    const element = document.getElementById(`modal-${this.cardName}`);
+    const element = this.moreInfoModal;
     element.parentNode.removeChild(element);
   }
 
   render() {
-    const moreInfoModal = document.createElement("div");
-    moreInfoModal.className = "more-info-modal";
-    moreInfoModal.id = `modal-${this.cardName}`;
-    moreInfoModal.innerHTML = `
+    this.moreInfoModal = document.createElement("div");
+    this.moreInfoModal.className = "more-info-modal";
+    this.moreInfoModal.innerHTML = `
 			<h2>${this.message}</h2>
     `;
-    moreInfoModal.addEventListener("click", this.closeModal.bind(this));
-    return moreInfoModal;
+    this.moreInfoModal.addEventListener("click", this.closeModal.bind(this));
+    document
+      .getElementById("main-header")
+      .parentElement.append(this.moreInfoModal);
   }
 }
 
 class App {
   static init() {
-    const projectList = document.getElementsByClassName("alt");
-    const array = [...projectList];
-    array.forEach((item) => {
-      item.addEventListener("click", (event) => Card.showMoreInfo(event));
+    this.newCard = new Card();
+    const projectList = document.querySelectorAll(".alt");
+    projectList.forEach((moreInfoBtn) => {
+      moreInfoBtn.addEventListener("click", (event) =>
+        this.newCard.showMoreInfo(event)
+      );
     });
     const activeProjectCollection = document.querySelectorAll(
       "#active-projects .card"
     );
     activeProjectCollection.forEach((item) => {
       item.lastElementChild.addEventListener("click", (event) =>
-        Card.finishCard(event)
+        this.newCard.finishCard(event)
       );
     });
     const finishedProjectCollection = document.querySelectorAll(
@@ -81,7 +78,7 @@ class App {
     );
     finishedProjectCollection.forEach((item) => {
       item.lastElementChild.addEventListener("click", (event) =>
-        Card.activateCard(event)
+        this.newCard.activateCard(event)
       );
     });
   }
