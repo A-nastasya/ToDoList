@@ -27,14 +27,16 @@ class Card {
 
   showMoreInfo(event) {
     const target = event.currentTarget;
-    const name = target.parentElement.firstElementChild.innerHTML;
-    const modal = new MoreInfoModal(name);
+    //const name = target.parentElement.firstElementChild.innerHTML;
+    const dataExtraInfo = target.parentElement.dataset.extraInfo
+    const modal = new MoreInfoModal(dataExtraInfo);
   }
 }
 
 class MoreInfoModal {
-  constructor(name) {
-    this.message = `I don't want to ${name.toLowerCase()}`;
+  constructor(dataExtraInfo) {
+    this.message = `${dataExtraInfo}`
+    //this.message = `I don't want to ${name.toLowerCase()}`;
     this.render();
   }
 
